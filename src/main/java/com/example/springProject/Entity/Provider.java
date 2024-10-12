@@ -36,7 +36,7 @@ public class Provider {
     @JoinColumn(name = "provider_type", referencedColumnName = "type_id", nullable = false)
     private ProviderType providerType;
 
-    @Column(name = "contact_number", unique = true, nullable = false)
+    @Column(name = "contact_number",nullable = false)
     private String contactNumber;
 
     @Column(name = "email", unique = true, nullable = false)

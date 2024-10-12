@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AgentRepository extends JpaRepository<Agents,String > {
     Agents findByAgentId(String id);
+    boolean existsByAgentId(String agentId);
 }

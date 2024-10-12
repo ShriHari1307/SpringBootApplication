@@ -1,13 +1,11 @@
 package com.example.springProject.BO;
 
 import com.example.springProject.DTO.AgentDTO;
-import com.example.springProject.DTO.ProviderDTO;
 import com.example.springProject.Entity.Agents;
 import com.example.springProject.Entity.Provider;
 import com.example.springProject.Exception.AgentManagementException;
 import com.example.springProject.Exception.AgentNotFoundException;
 import com.example.springProject.Exception.ProviderManagementException;
-import com.example.springProject.Exception.ProviderNotFoundException;
 import com.example.springProject.Repository.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,23 +40,23 @@ public class AgentBO {
     public AgentDTO insert(AgentDTO agentDTO) throws AgentManagementException, ProviderManagementException {
         Agents agents = AgentDTO.toAgentEntity(agentDTO, providerRepository, agentRepository, cityRepository, stateRepository, agentStatusRepository);
         isValidInsert(agents);
-        log.info("Inserting agent: "+  agentDTO);
-        if(agentRepository.findByAgentId(agents.getAgentId()) != null) {
-            throw new AgentManagementException("Agent with id:"+agents.getAgentId()+" already exists");
+        log.info("Inserting agent: " + agentDTO);
+        if (agentRepository.findByAgentId(agents.getAgentId()) != null) {
+            throw new AgentManagementException("Agent with id:" + agents.getAgentId() + " already exists");
         }
         log.info("Agent inserted successfully " + agents.getAgentId());
         return AgentDTO.toAgentDTO(agentRepository.save(agents));
     }
 
     public Agents findAgents(String agentsId) throws AgentManagementException, AgentNotFoundException {
-        log.info("Finding agent with ID: "+ agentsId);
+        log.info("Finding agent with ID: " + agentsId);
         validateAgentId(agentsId);
         Agents agent = agentRepository.findByAgentId(agentsId);
         if (agent == null) {
-            log.warn("Agent not found: "+ agentsId);
+            log.warn("Agent not found: " + agentsId);
             throw new AgentNotFoundException("Agent not found: " + agentsId);
         }
-        log.info("Agent found: "+ agent);
+        log.info("Agent found: " + agent);
         return agent;
     }
 
@@ -69,15 +67,15 @@ public class AgentBO {
             throw new AgentNotFoundException("Provider with ID " + agentId + " not found");
         }
         existingAgent.setFirstName(agentDTO.getFirstName());
-        existingAgent.setFirstName(agentDTO.getLastName());
+        existingAgent.setLastName(agentDTO.getLastName());
         existingAgent.setEmail(agentDTO.getEmail());
         existingAgent.setStreet(agentDTO.getStreet());
-        existingAgent.setCity(cityRepository.findById(agentDTO.getCityID()).orElseThrow(()-> new AgentManagementException("City not found")));
-        existingAgent.setState(stateRepository.findById(agentDTO.getStateID()).orElseThrow(()-> new AgentManagementException("State not found")));
+        existingAgent.setCity(cityRepository.findById(agentDTO.getCityID()).orElseThrow(() -> new AgentManagementException("City not found")));
+        existingAgent.setState(stateRepository.findById(agentDTO.getStateID()).orElseThrow(() -> new AgentManagementException("State not found")));
         existingAgent.setContact(agentDTO.getContact());
         existingAgent.setLicenseNumber(agentDTO.getLicenseNumber());
         existingAgent.setDateOfJoining(agentDTO.getDateOfJoining());
-        existingAgent.setStatus(agentStatusRepository.findById(agentDTO.getStatus()).orElseThrow(()-> new AgentManagementException("Status not found")));
+        existingAgent.setStatus(agentStatusRepository.findById(agentDTO.getStatus()).orElseThrow(() -> new AgentManagementException("Status not found")));
         isValidInsert(existingAgent);
         Agents updatedAgents = agentRepository.save(existingAgent);
         log.info("Provider updated successfully: " + updatedAgents.getAgentId());
@@ -86,23 +84,23 @@ public class AgentBO {
 
     @Transactional
     public List<Agents> deleteAgent(String agentId) throws AgentNotFoundException, AgentManagementException {
-        if(findAgents(agentId) == null){
+        if (findAgents(agentId) == null) {
             throw new AgentNotFoundException("Agent with ID " + agentId + " not found");
         }
-        log.info("Deleting agent with ID: "+ agentId);
+        log.info("Deleting agent with ID: " + agentId);
         Agents agents = agentRepository.findByAgentId(agentId);
         Provider provider = agents.getProvider();
-        if(provider != null){
+        if (provider != null) {
             List<Agents> providerAgents = provider.getAgents();
-            if(providerAgents.contains(agents)){
+            if (providerAgents.contains(agents)) {
                 providerAgents.remove(agents);
                 provider.setAgents(providerAgents);
                 providerRepository.save(provider);
-                log.info("Provider updated successfully after removing agent: "+ agentId);
+                log.info("Provider updated successfully after removing agent: " + agentId);
             }
         }
         agentRepository.deleteById(agentId);
-        log.info("Provider deleted successfully: "+ agentId);
+        log.info("Provider deleted successfully: " + agentId);
         return findAllAgents();
     }
 
@@ -110,14 +108,14 @@ public class AgentBO {
     public List<Agents> findAllAgents() {
         log.info("Fetching all agents");
         List<Agents> agents = agentRepository.findAll();
-        log.info("Total agents found: "+ agents.size());
+        log.info("Total agents found: " + agents.size());
         return agents;
     }
 
     public void isValidInsert(Agents agents) throws AgentManagementException {
-        log.debug("Validating agent data for insertion: "+ agents);
+        log.debug("Validating agent data for insertion: " + agents);
         if (!isValidEmail(agents.getEmail())) {
-            log.error("Invalid email format: "+ agents.getEmail());
+            log.error("Invalid email format: " + agents.getEmail());
             throw new AgentManagementException("Invalid email format: " + agents.getEmail());
         }
         if (agents.getAgentId() == null) {
@@ -165,15 +163,15 @@ public class AgentBO {
             throw new AgentManagementException("Email cannot be null");
         }
         if (!agents.getFirstName().matches("[A-Za-z ]+")) {
-            log.error("Agent Name should only contain letters, no digits allowed: "+ agents.getFirstName());
+            log.error("Agent Name should only contain letters, no digits allowed: " + agents.getFirstName());
             throw new AgentManagementException("Agent Name should only contain letters, no digits allowed: " + agents.getFirstName());
         }
         if (!agents.getLastName().matches("[A-Za-z ]+")) {
-            log.error("Agent Name should only contain letters, no digits allowed: "+ agents.getLastName());
+            log.error("Agent Name should only contain letters, no digits allowed: " + agents.getLastName());
             throw new AgentManagementException("Agent Name should only contain letters, no digits allowed: " + agents.getLastName());
         }
         if (!agents.getAgentId().matches("^[Aa][0-9]+$")) {
-            log.error("Agent ID must start with 'A' or 'a' followed by digits: "+ agents.getAgentId());
+            log.error("Agent ID must start with 'A' or 'a' followed by digits: " + agents.getAgentId());
             throw new AgentManagementException("Agent ID must start with 'A' or 'a' followed by digits: " + agents.getAgentId());
         }
         if (agents.getContact() == null || agents.getContact().isEmpty()) {
@@ -181,11 +179,11 @@ public class AgentBO {
             throw new AgentManagementException("Agent contact number cannot be null or empty");
         }
         if (!agents.getContact().matches("[0-9]+")) {
-            log.error("Contact number should only contain digits: "+ agents.getContact());
+            log.error("Contact number should only contain digits: " + agents.getContact());
             throw new AgentManagementException("Contact number should only contain digits: " + agents.getContact());
         }
         if (agents.getContact().length() != 10) {
-            log.error("Agent contact number must be 10 digits: "+ agents.getContact());
+            log.error("Agent contact number must be 10 digits: " + agents.getContact());
             throw new AgentManagementException("Agent contact number must be 10 digits: " + agents.getContact());
         }
         if (agents.getDateOfJoining().after(new Date())) {
@@ -203,12 +201,12 @@ public class AgentBO {
 
     @Transactional
     public List<Agents> deleteAgents(String agentId) throws AgentNotFoundException, AgentManagementException {
-        if(findAgents(agentId) == null){
+        if (findAgents(agentId) == null) {
             throw new AgentNotFoundException("Provider with ID " + agentId + " not found");
         }
-        log.info("Deleting provider with ID: "+ agentId);
+        log.info("Deleting provider with ID: " + agentId);
         agentRepository.deleteById(agentId);
-        log.info("Provider deleted successfully: "+ agentId);
+        log.info("Provider deleted successfully: " + agentId);
         return findAllAgents();
     }
 
@@ -218,9 +216,9 @@ public class AgentBO {
             throw new AgentManagementException("Agent ID cannot be empty");
         }
         if (!agentId.matches("^[Aa][0-9]+$")) {
-            log.error("Agent ID must start with 'A' or 'a' followed by digits: "+ agentId);
+            log.error("Agent ID must start with 'A' or 'a' followed by digits: " + agentId);
             throw new AgentManagementException("Agent ID must start with 'A' or 'a' followed by digits: " + agentId);
         }
-        log.debug("Agent ID {} validated successfully."+ agentId);
+        log.debug("Agent ID {} validated successfully." + agentId);
     }
 }

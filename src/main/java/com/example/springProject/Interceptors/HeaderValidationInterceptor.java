@@ -11,6 +11,10 @@ import java.io.PrintWriter;
 @Component
 public class HeaderValidationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String uri = request.getRequestURI();
+        if (uri.equals("/favicon.ico")) {
+            return true;
+        }
         String customHeader = request.getHeader("X-Custom-Header");
         if (customHeader == null || !customHeader.equals("validHeaderValue")) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

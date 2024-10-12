@@ -6,4 +6,6 @@ public interface ProviderAgentProjectionInterface {
     String getAgentFirstName();
     String getAgentLastName();
     String getAgentEmail();
+
+
 }

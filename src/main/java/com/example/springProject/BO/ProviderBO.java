@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @Component
 public class ProviderBO {
 
-    private static  Logger log = Logger.getLogger(ProviderBO.class);
+    private static Logger log = Logger.getLogger(ProviderBO.class);
 
     @Autowired
     private CityRepository cityRepository;
@@ -38,10 +38,10 @@ public class ProviderBO {
     public ProviderDTO insert(ProviderDTO providerDTO) throws ProviderManagementException {
         Provider provider = ProviderDTO.toProviderEntity(providerDTO, cityRepository, stateRepository, providerTypeRepository, agentRepository);
         isValidInsert(provider);
-        if(repo.findByProviderId(provider.getProviderId()).isPresent()){
+        if (repo.findByProviderId(provider.getProviderId()).isPresent()) {
             throw new ProviderManagementException("Provider already exists");
         }
-        log.info("Provider inserted successfully: "+ provider.getProviderId());
+        log.info("Provider inserted successfully: " + provider.getProviderId());
         return ProviderDTO.toProviderDTO(repo.save(provider));
     }
 
@@ -50,29 +50,26 @@ public class ProviderBO {
         validateProviderId(providerId);
         Provider provider = repo.findById(providerId).orElse(null);
         if (provider == null) {
-            log.warn("Provider not found: "+ providerId);
+            log.warn("Provider not found: " + providerId);
             throw new ProviderNotFoundException("Provider not found: " + providerId);
         }
-        log.info("Provider found: "+ provider);
+        log.info("Provider found: ");
         return provider;
     }
 
     @Transactional(readOnly = true)
     public List<Provider> findAllProviders() {
-        log.info("Fetching all providers");
-        List<Provider> providers = repo.findAll();
-        log.info("Total providers found: "+ providers.size());
-        return providers;
+        return repo.findAll();
     }
 
     @Transactional
     public List<Provider> deleteProvider(String providerId) throws ProviderNotFoundException {
-        if(repo.findByProviderId(providerId).isEmpty()){
+        if (repo.findByProviderId(providerId).isEmpty()) {
             throw new ProviderNotFoundException("Provider with ID " + providerId + " not found");
         }
-        log.info("Deleting provider with ID: "+ providerId);
+        log.info("Deleting provider with ID: " + providerId);
         repo.deleteById(providerId);
-        log.info("Provider deleted successfully: "+ providerId);
+        log.info("Provider deleted successfully: " + providerId);
         return findAllProviders();
     }
 
@@ -85,8 +82,8 @@ public class ProviderBO {
         existingProvider.setProviderName(providerDTO.getProviderName());
         existingProvider.setEmail(providerDTO.getEmail());
         existingProvider.setStreet(providerDTO.getStreet());
-        existingProvider.setCity(cityRepository.findById(providerDTO.getCityId()).orElseThrow(()-> new ProviderManagementException("City not found")));
-        existingProvider.setState(stateRepository.findById(providerDTO.getStateId()).orElseThrow(()-> new ProviderManagementException("State not found")));
+        existingProvider.setCity(cityRepository.findById(providerDTO.getCityId()).orElseThrow(() -> new ProviderManagementException("City not found")));
+        existingProvider.setState(stateRepository.findById(providerDTO.getStateId()).orElseThrow(() -> new ProviderManagementException("State not found")));
         existingProvider.setProviderType(providerTypeRepository.findByType(providerDTO.getProviderType()));
         existingProvider.setContactNumber(providerDTO.getContactNumber());
         List<Agents> agents = agentRepository.findAllById(providerDTO.getAgentIds());
@@ -98,7 +95,7 @@ public class ProviderBO {
     }
 
     private void isValidInsert(Provider provider) throws ProviderManagementException {
-        log.debug("Validating provider data for insertion: "+ provider);
+        log.debug("Validating provider data for insertion: " + provider);
 
         if (provider.getProviderId() == null) {
             log.error("Provider ID cannot be null");
@@ -136,12 +133,12 @@ public class ProviderBO {
         }
 
         if (!provider.getProviderName().matches("[A-Za-z ]+")) {
-            log.error("Provider Name should only contain letters, no digits allowed: "+ provider.getProviderName());
+            log.error("Provider Name should only contain letters, no digits allowed: " + provider.getProviderName());
             throw new ProviderManagementException("Provider Name should only contain letters, no digits allowed: " + provider.getProviderName());
         }
 
         if (!provider.getProviderId().matches("^[Pp][0-9]+$")) {
-            log.error("Provider ID must start with 'P' or 'p' followed by digits: "+ provider.getProviderId());
+            log.error("Provider ID must start with 'P' or 'p' followed by digits: " + provider.getProviderId());
             throw new ProviderManagementException("Provider ID must start with 'P' or 'p' followed by digits: " + provider.getProviderId());
         }
 
@@ -151,17 +148,17 @@ public class ProviderBO {
         }
 
         if (!provider.getContactNumber().matches("[0-9]+")) {
-            log.error("Contact number should only contain digits: "+ provider.getContactNumber());
+            log.error("Contact number should only contain digits: " + provider.getContactNumber());
             throw new ProviderManagementException("Contact number should only contain digits: " + provider.getContactNumber());
         }
 
         if (provider.getContactNumber().length() != 10) {
-            log.error("Provider contact number must be 10 digits: "+ provider.getContactNumber());
+            log.error("Provider contact number must be 10 digits: " + provider.getContactNumber());
             throw new ProviderManagementException("Provider contact number must be 10 digits: " + provider.getContactNumber());
         }
 
         if (!isValidEmail(provider.getEmail())) {
-            log.error("Invalid email format: "+ provider.getEmail());
+            log.error("Invalid email format: " + provider.getEmail());
             throw new ProviderManagementException("Invalid email format: " + provider.getEmail());
         }
 
@@ -169,25 +166,25 @@ public class ProviderBO {
     }
 
     private boolean isValidEmail(String email) {
-        log.debug("Validating provider email: "+ email);
+        log.debug("Validating provider email: " + email);
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(emailRegex);
         return email != null && pattern.matcher(email).matches();
     }
 
     private void validateProviderId(String providerId) throws ProviderManagementException {
-        log.debug("Validating provider ID: "+ providerId);
+        log.debug("Validating provider ID: " + providerId);
         if (providerId.isEmpty()) {
             log.error("Provider ID cannot be empty");
             throw new ProviderManagementException("Provider ID cannot be empty");
         }
 
         if (!providerId.matches("^[Pp][0-9]+$")) {
-            log.error("Provider ID must start with 'P' or 'p' followed by digits: "+ providerId);
+            log.error("Provider ID must start with 'P' or 'p' followed by digits: " + providerId);
             throw new ProviderManagementException("Provider ID must start with 'P' or 'p' followed by digits: " + providerId);
         }
 
-        log.debug("Provider ID {} validated successfully. "+ providerId);
+        log.debug("Provider ID {} validated successfully. " + providerId);
     }
 
     public Long countTotalProviders() {
@@ -225,11 +222,12 @@ public class ProviderBO {
     public List<ProviderProjectionInterface> findBySelectedColumn() throws ProviderManagementException {
         return repo.findBySelectedColumn();
     }
-    public List<Provider> findAllByOrderByCreatedAtDesc(){
+
+    public List<Provider> findAllByOrderByCreatedAtDesc() {
         return repo.findAllByOrderByCreatedAtDesc();
     }
 
-    public List<Provider> findAllWithAgents(){
+    public List<Provider> findAllWithAgents() {
         return repo.findAllWithAgents();
     }
 }

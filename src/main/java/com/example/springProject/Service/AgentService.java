@@ -37,8 +37,8 @@ public class AgentService {
         return allAgents.stream().map(AgentDTO::toAgentDTO).toList();
     }
 
-    public AgentDTO updateAgent(String AgentId, AgentDTO agentDTO) throws AgentNotFoundException, AgentManagementException {
-        return agentBO.updateAgent(AgentId, agentDTO);
+    public AgentDTO updateAgent(String agentId, AgentDTO agentDTO) throws AgentNotFoundException, AgentManagementException {
+        return agentBO.updateAgent(agentId, agentDTO);
     }
     public List<Agents> deleteAgent(String agentId) throws AgentNotFoundException, AgentManagementException {
         return agentBO.deleteAgent(agentId);
