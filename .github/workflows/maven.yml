@@ -5,7 +5,6 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-
 name: Java CI with Maven
 
 on:
@@ -29,10 +28,10 @@ jobs:
           --health-timeout=5s 
           --health-retries=3
         env:
-          MYSQL_ROOT_PASSWORD: rootpassword  # This can remain as is
-          MYSQL_DATABASE: insuranceSpring      # Make sure this matches the database in application.properties
-          MYSQL_USER: root                     # Change to 'root' if that's what you're using in application.properties
-          MYSQL_PASSWORD: Tshrihari@1363 
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: insuranceSpring
+          MYSQL_USER: root                     # Using root as per your application.properties
+          MYSQL_PASSWORD: Tshrihari@1363       # Match with application.properties
 
     steps:
     - uses: actions/checkout@v4
@@ -44,10 +43,20 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {1..30}; do
+          if mysql -h 127.0.0.1 -u root -prootpassword -e "SELECT 1"; then
+            echo "MySQL is up!"
+            break
+          fi
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
+
     - name: Build with Maven
       run: mvn clean install
 
     - name: Run tests with Maven
       run: mvn test
-
 
