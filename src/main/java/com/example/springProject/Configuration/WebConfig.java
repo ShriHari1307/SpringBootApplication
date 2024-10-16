@@ -22,6 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(headerValidationInterceptor).addPathPatterns("/**").order(2);
         registry.addInterceptor(loggingInterceptor).order(1);
         registry.addInterceptor(roleInterceptor).addPathPatterns("/provider/create", "/provider/DeleteProvider/**", "/provider/update/**",
-                        "/agent/create/**", "/agent/update/**", "/agent/deleteAgent/**").order(3);
+                "/agent/create/**", "/agent/update/**", "/agent/deleteAgent/**").order(3);
     }
 }

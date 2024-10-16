@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProviderRepository extends JpaRepository<Provider,String> {
+public interface ProviderRepository extends JpaRepository<Provider, String> {
 
 //    @Query(value = "select p from Provider p where p.providerId = :id1")
 //    List<Provider> findProviderById(@Param("id1") String id);
@@ -47,7 +47,7 @@ public interface ProviderRepository extends JpaRepository<Provider,String> {
     @Query(name = "findAllByOrderByCreatedAtDesc")
     List<Provider> findAllByOrderByCreatedAtDesc();
 
-    @Query(name ="joinNamedQuery")
+    @Query(name = "joinNamedQuery")
     List<Provider> findAllWithAgents();
 
 

@@ -17,7 +17,6 @@ public class ProviderService {
 
     @Autowired
     private ProviderBO providerBO;
-
     @Autowired
     private AgentBO agentBO;
     @Autowired
@@ -58,42 +57,49 @@ public class ProviderService {
         return providerBO.updateProvider(providerId, providerDTO);
     }
 
-    public Long countTotalProviders(){
+    public Long countTotalProviders() {
         return providerBO.countTotalProviders();
     }
 
-    public List<ProviderDTO> findProvidersWithMinimumAgents(){
+    public List<ProviderDTO> findProvidersWithMinimumAgents() {
         return providerBO.findProvidersWithMinimumAgents().stream()
                 .map(ProviderDTO::toProviderDTO).toList();
     }
 
-    public List<ProviderCountByStateProjectionInterface> countProvidersByState(){
+    public List<ProviderCountByStateProjectionInterface> countProvidersByState() {
         return providerBO.countProvidersByState();
     }
-    public List<ProviderIdProjectionInterface> findProviderNamesAndEmailsOrderedByName(){
+
+    public List<ProviderIdProjectionInterface> findProviderNamesAndEmailsOrderedByName() {
         return providerBO.findProviderNamesAndEmailsOrdered();
     }
-    public List<ProviderDTO> findProvidersInnerJoinAgents(){
+
+    public List<ProviderDTO> findProvidersInnerJoinAgents() {
         return providerBO.findProvidersInnerJoinAgents().stream()
                 .map(ProviderDTO::toProviderDTO)
                 .toList();
     }
-    public List<ProviderDTO> findAllProvidersLeftJoinAgents(){
+
+    public List<ProviderDTO> findAllProvidersLeftJoinAgents() {
         return providerBO.findAllProvidersLeftJoinAgents().stream()
                 .map(ProviderDTO::toProviderDTO).toList();
     }
-    public List<ProviderDTO> findAllProvidersRightJoinAgents(){
+
+    public List<ProviderDTO> findAllProvidersRightJoinAgents() {
         return providerBO.findAllProvidersRightJoinAgents().stream()
                 .map(ProviderDTO::toProviderDTO).toList();
     }
-    public List<ProviderAgentProjectionInterface> findAllProvidersCrossJoinAgents(){
+
+    public List<ProviderAgentProjectionInterface> findAllProvidersCrossJoinAgents() {
         return providerBO.findAllProvidersCrossJoinAgents();
     }
-    public List<ProviderDTO> findAllByOrderByCreatedAtDesc(){
+
+    public List<ProviderDTO> findAllByOrderByCreatedAtDesc() {
         return providerBO.findAllByOrderByCreatedAtDesc().stream()
                 .map(ProviderDTO::toProviderDTO).toList();
     }
-    public List<ProviderDTO> findAllWithAgents(){
+
+    public List<ProviderDTO> findAllWithAgents() {
         return providerBO.findAllWithAgents().stream()
                 .map(ProviderDTO::toProviderDTO).toList();
     }

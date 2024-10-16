@@ -11,12 +11,12 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy
 public class SpringProjectApplication {
 
-	static Logger log = Logger.getLogger(SpringProjectApplication.class);
+    static Logger log = Logger.getLogger(SpringProjectApplication.class);
 
-	public static void main(String[] args) {
-		PropertyConfigurator.configure("C:\\Users\\shrih\\Downloads\\springProject\\springProject\\src\\Properties\\Log4j.properties");
-		log.info("Starting Spring Project");
-		ApplicationContext ctx = SpringApplication.run(SpringProjectApplication.class, args);
-	}
+    public static void main(String[] args) {
+        PropertyConfigurator.configure("C:\\Users\\shrih\\Downloads\\springProject\\springProject\\src\\Properties\\Log4j.properties");
+        log.info("Starting Spring Project");
+        ApplicationContext ctx = SpringApplication.run(SpringProjectApplication.class, args);
+    }
 
 }

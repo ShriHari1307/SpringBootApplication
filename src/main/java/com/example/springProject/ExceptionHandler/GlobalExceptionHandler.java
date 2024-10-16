@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     static Logger log = Logger.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ProviderManagementException.class)
-    public ResponseEntity<Object> handleProviderMangementException(ProviderManagementException exception) {
+    public ResponseEntity<Object> handleProviderManagementException(ProviderManagementException exception) {
         log.error("ProviderManagementException: "+exception);
         return ResponseHandler.getResponse("ProviderManagementException: "+exception.getMessage(),HttpStatus.BAD_REQUEST,null);
     }

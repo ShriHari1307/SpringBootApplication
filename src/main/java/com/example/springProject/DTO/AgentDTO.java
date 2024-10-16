@@ -24,7 +24,7 @@ public class AgentDTO {
     private Integer stateID;
     private Integer status;
 
-    public static AgentDTO toAgentDTO(Agents agents){
+    public static AgentDTO toAgentDTO(Agents agents) {
         return AgentDTO.builder()
                 .agentId(agents.getAgentId())
                 .firstName(agents.getFirstName())
@@ -44,18 +44,18 @@ public class AgentDTO {
 
     public static Agents toAgentEntity(AgentDTO agentDTO, ProviderRepository providerRepository, AgentRepository agentRepository, CityRepository cityRepository, StateRepository stateRepository, AgentStatusRepository agentStatusRepository) throws ProviderManagementException {
         return Agents.builder()
-               .agentId(agentDTO.getAgentId())
-               .firstName(agentDTO.getFirstName())
-               .lastName(agentDTO.getLastName())
-               .contact(agentDTO.getContact())
+                .agentId(agentDTO.getAgentId())
+                .firstName(agentDTO.getFirstName())
+                .lastName(agentDTO.getLastName())
+                .contact(agentDTO.getContact())
                 .city(cityRepository.findById(agentDTO.getCityID()).orElseThrow(() -> new ProviderManagementException("City not found")))
-               .state(stateRepository.findById(agentDTO.getStateID()).orElseThrow(() -> new ProviderManagementException("State not found")))
-               .licenseNumber(agentDTO.getLicenseNumber())
-               .dateOfJoining(agentDTO.getDateOfJoining())
-               .provider(providerRepository.findById(agentDTO.getProviderId()).orElseThrow(() -> new ProviderManagementException("Provider not found")))
-               .street(agentDTO.getStreet())
-               .email(agentDTO.getEmail())
-               .status(agentStatusRepository.findById(agentDTO.getStatus()).orElseThrow(() -> new ProviderManagementException("Status not found")))
-               .build();
+                .state(stateRepository.findById(agentDTO.getStateID()).orElseThrow(() -> new ProviderManagementException("State not found")))
+                .licenseNumber(agentDTO.getLicenseNumber())
+                .dateOfJoining(agentDTO.getDateOfJoining())
+                .provider(providerRepository.findById(agentDTO.getProviderId()).orElseThrow(() -> new ProviderManagementException("Provider not found")))
+                .street(agentDTO.getStreet())
+                .email(agentDTO.getEmail())
+                .status(agentStatusRepository.findById(agentDTO.getStatus()).orElseThrow(() -> new ProviderManagementException("Status not found")))
+                .build();
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @Builder
 @NamedQuery(name = "findAllByOrderByCreatedAtDesc", query = "SELECT p FROM Provider p ORDER BY p.createdAt DESC")
-@NamedQuery(name = "joinNamedQuery",query = "SELECT p FROM Provider p JOIN p.agents a")
+@NamedQuery(name = "joinNamedQuery", query = "SELECT p FROM Provider p JOIN p.agents a")
 
 @Table(name = "providers")
 @NoArgsConstructor
@@ -36,7 +36,7 @@ public class Provider {
     @JoinColumn(name = "provider_type", referencedColumnName = "type_id", nullable = false)
     private ProviderType providerType;
 
-    @Column(name = "contact_number",nullable = false)
+    @Column(name = "contact_number", nullable = false)
     private String contactNumber;
 
     @Column(name = "email", unique = true, nullable = false)

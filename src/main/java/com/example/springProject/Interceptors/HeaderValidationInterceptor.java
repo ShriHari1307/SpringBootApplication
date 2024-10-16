@@ -30,6 +30,7 @@ public class HeaderValidationInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         System.out.println("Post-handle: Request processed, preparing to render view.");
     }
+
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         System.out.println("After-completion: Request and response completed.");
