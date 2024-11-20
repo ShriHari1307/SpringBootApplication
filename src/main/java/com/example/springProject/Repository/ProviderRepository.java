@@ -11,9 +11,6 @@ import java.util.Optional;
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider, String> {
 
-//    @Query(value = "select p from Provider p where p.providerId = :id1")
-//    List<Provider> findProviderById(@Param("id1") String id);
-
     @Query("select p.providerId as providerId, p.providerName as providerName, p.email as email from Provider p")
     List<ProviderProjectionInterface> findBySelectedColumn();
 

@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component
 public class ProviderBO {
 
-    private static Logger log = Logger.getLogger(ProviderBO.class);
+    private static final Logger log = Logger.getLogger(ProviderBO.class);
 
     @Autowired
     private CityRepository cityRepository;
@@ -36,13 +37,32 @@ public class ProviderBO {
 
     @Transactional
     public ProviderDTO insert(ProviderDTO providerDTO) throws ProviderManagementException {
-        Provider provider = ProviderDTO.toProviderEntity(providerDTO, cityRepository, stateRepository, providerTypeRepository, agentRepository);
+        Provider provider;
+        try {
+            provider = ProviderDTO.toProviderEntity(providerDTO, cityRepository, stateRepository, providerTypeRepository, agentRepository);
+            List<Agents> agents = providerDTO.getAgentIds().stream()
+                    .map(agentId -> {
+                        try {
+                            return agentRepository.findById(agentId)
+                                    .orElseThrow(() -> new ProviderManagementException("Agent with ID " + agentId + " not found"));
+                        } catch (ProviderManagementException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            provider.setAgents(agents);
+        } catch (Exception e) {
+            throw new ProviderManagementException("Error while converting ProviderDTO to Provider entity: " + e.getMessage(), e);
+        }
         isValidInsert(provider);
         if (repo.findByProviderId(provider.getProviderId()).isPresent()) {
-            throw new ProviderManagementException("Provider already exists");
+            throw new ProviderManagementException("Provider with ID " + provider.getProviderId() + " already exists");
         }
-        log.info("Provider inserted successfully: " + provider.getProviderId());
-        return ProviderDTO.toProviderDTO(repo.save(provider));
+        Provider savedProvider = repo.save(provider);
+        log.info("Provider inserted successfully: " + savedProvider.getProviderId());
+
+        return ProviderDTO.toProviderDTO(savedProvider);
     }
 
     @Transactional(readOnly = true)
@@ -56,6 +76,7 @@ public class ProviderBO {
         log.info("Provider found: ");
         return provider;
     }
+
 
     @Transactional(readOnly = true)
     public List<Provider> findAllProviders() {

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
+
 public class SpringProjectApplication {
 
     static Logger log = Logger.getLogger(SpringProjectApplication.class);

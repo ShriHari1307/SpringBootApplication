@@ -27,7 +27,11 @@ public class ProviderService {
     private AgentRepository agentRepository;
 
     public ProviderDTO insert(ProviderDTO providerDTO) throws ProviderManagementException {
-        return providerBO.insert(providerDTO);
+        try {
+            return providerBO.insert(providerDTO);
+        } catch (ProviderManagementException e) {
+            throw new ProviderManagementException("Error while inserting provider: " + e.getMessage(), e);
+        }
     }
 
     public ProviderDTO findProvider(String providerId) throws ProviderManagementException, ProviderNotFoundException {

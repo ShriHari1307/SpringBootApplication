@@ -18,9 +18,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class AgentBO {
-
     private static Logger log = Logger.getLogger(AgentBO.class);
-
     @Autowired
     private AgentRepository agentRepository;
 
@@ -64,23 +62,34 @@ public class AgentBO {
     public AgentDTO updateAgent(String agentId, AgentDTO agentDTO) throws AgentManagementException, AgentNotFoundException {
         Agents existingAgent = findAgents(agentId);
         if (existingAgent == null) {
-            throw new AgentNotFoundException("Provider with ID " + agentId + " not found");
+            throw new AgentNotFoundException("Agent with ID " + agentId + " not found");
         }
+
         existingAgent.setFirstName(agentDTO.getFirstName());
         existingAgent.setLastName(agentDTO.getLastName());
         existingAgent.setEmail(agentDTO.getEmail());
         existingAgent.setStreet(agentDTO.getStreet());
-        existingAgent.setCity(cityRepository.findById(agentDTO.getCityID()).orElseThrow(() -> new AgentManagementException("City not found")));
-        existingAgent.setState(stateRepository.findById(agentDTO.getStateID()).orElseThrow(() -> new AgentManagementException("State not found")));
+        existingAgent.setCity(cityRepository.findById(agentDTO.getCityID())
+                .orElseThrow(() -> new AgentManagementException("City not found")));
+        existingAgent.setState(stateRepository.findById(agentDTO.getStateID())
+                .orElseThrow(() -> new AgentManagementException("State not found")));
         existingAgent.setContact(agentDTO.getContact());
         existingAgent.setLicenseNumber(agentDTO.getLicenseNumber());
         existingAgent.setDateOfJoining(agentDTO.getDateOfJoining());
-        existingAgent.setStatus(agentStatusRepository.findById(agentDTO.getStatus()).orElseThrow(() -> new AgentManagementException("Status not found")));
+        existingAgent.setStatus(agentStatusRepository.findById(agentDTO.getStatus())
+                .orElseThrow(() -> new AgentManagementException("Status not found")));
+        if (agentDTO.getProviderId() != null) {
+            Provider provider = providerRepository.findById(agentDTO.getProviderId())
+                    .orElseThrow(() -> new AgentManagementException("Provider not found"));
+            existingAgent.setProvider(provider);
+        }
+
         isValidInsert(existingAgent);
-        Agents updatedAgents = agentRepository.save(existingAgent);
-        log.info("Provider updated successfully: " + updatedAgents.getAgentId());
-        return AgentDTO.toAgentDTO(updatedAgents);
+        Agents updatedAgent = agentRepository.save(existingAgent);
+        log.info("Agent updated successfully: " + updatedAgent.getAgentId());
+        return AgentDTO.toAgentDTO(updatedAgent);
     }
+
 
     @Transactional
     public List<Agents> deleteAgent(String agentId) throws AgentNotFoundException, AgentManagementException {

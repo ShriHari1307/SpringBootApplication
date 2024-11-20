@@ -15,12 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Component
 @Entity
 @Builder
 @NamedQuery(name = "findAllByOrderByCreatedAtDesc", query = "SELECT p FROM Provider p ORDER BY p.createdAt DESC")
 @NamedQuery(name = "joinNamedQuery", query = "SELECT p FROM Provider p JOIN p.agents a")
-
 @Table(name = "providers")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,6 +27,7 @@ public class Provider {
     @Column(name = "provider_id")
     @NotNull
     private String providerId;
+
     @Column(name = "provider_name", nullable = false)
     private String providerName;
 
@@ -63,7 +62,13 @@ public class Provider {
     @UpdateTimestamp
     private Date updatedAt;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "provider")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "provider")
     @JsonManagedReference
     private List<Agents> agents;
+    public void addAgent(Agents agent) {
+        this.agents.add(agent);
+        if (agent.getProvider() != this) {
+            agent.setProvider(this);
+        }
+    }
 }

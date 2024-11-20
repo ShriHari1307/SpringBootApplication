@@ -63,20 +63,12 @@ public class Agents {
     @JoinColumn(name = "status", referencedColumnName = "status_id")
     private AgentStatus status;
 
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
     @Override
     public String toString() {
-        return "Agents{" +
-                "agentId='" + agentId + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", contact='" + contact + '\'' +
-                ", licenseNumber='" + licenseNumber + '\'' +
-                ", dateOfJoining=" + dateOfJoining +
-                ", providerId=" + (provider != null ? provider.getProviderId() : "null") +
-                ", cityId=" + (city != null ? city.getCityId() : "null") +
-                ", stateId=" + (state != null ? state.getStateId() : "null") +
-                ", email='" + email + '\'' +
-                ", statusId=" + (status != null ? status.getStatusId() : "null") +
-                '}';
+        return "Agent [id=" + agentId + ", name=" + firstName + "]";
     }
+
 }

@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/provider")
 public class ProviderController {
@@ -28,20 +30,26 @@ public class ProviderController {
     private ProviderService providerService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> insert(@RequestBody ProviderDTO providerDTO, HttpServletRequest request) throws ProviderManagementException {
-        log.info("Insert method called");
-        log.info("Creating provider with details: " + providerDTO);
-        List<ProviderDTO> allProviders = providerService.findAllProviders();
-        for (ProviderDTO allProvider : allProviders) {
-            log.info("List of all providers before insertion: " + allProvider);
+    public ResponseEntity<Object> insert(@RequestBody ProviderDTO providerDTO, HttpServletRequest request) {
+        try {
+            log.info("Insert method called");
+            log.info("Creating provider with details: " + providerDTO);
+            List<ProviderDTO> allProviders = providerService.findAllProviders();
+            log.info("List of all providers before insertion: " + allProviders);
+            ProviderDTO createdProvider = providerService.insert(providerDTO);
+            List<ProviderDTO> allProvidersAfter = providerService.findAllProviders();
+            log.info("Provider created successfully: " + createdProvider);
+            for (ProviderDTO dto : allProvidersAfter) {
+                log.info("List of providers after insertion: " + dto);
+            }
+            return ResponseHandler.getResponse("Provider created successfully", HttpStatus.CREATED, createdProvider);
+        } catch (ProviderManagementException e) {
+            log.error("Error occurred while creating provider: " + e.getMessage(), e);
+            return ResponseHandler.getResponse("Error occurred while creating provider: " + e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            log.error("Unexpected error: " + e.getMessage(), e);
+            return ResponseHandler.getResponse("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
-        ProviderDTO createdProvider = providerService.insert(providerDTO);
-        List<ProviderDTO> allProvidersAfter = providerService.findAllProviders();
-        log.info("Provider created successfully: " + createdProvider);
-        for (ProviderDTO dto : allProvidersAfter) {
-            log.info("List of providers after insertion: " + dto);
-        }
-        return ResponseHandler.getResponse("Provider created successfully", HttpStatus.CREATED, createdProvider);
     }
 
     @GetMapping("{providerId}")
@@ -53,10 +61,6 @@ public class ProviderController {
         return ResponseHandler.getResponse("Provider found", HttpStatus.OK, providerDTO);
     }
 
-//    @GetMapping("/token")
-//    public CsrfToken getCsrfToken(HttpServletRequest request) {
-//        return (CsrfToken) request.getAttribute("_csrf");
-//    }
 
     @GetMapping
     public ResponseEntity<Object> getAllProviders() throws ProviderManagementException {
